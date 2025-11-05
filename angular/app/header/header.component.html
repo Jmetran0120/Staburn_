@@ -1,0 +1,60 @@
+<header class="header">
+  <div class="main-header">
+    <div class="container">
+      <div class="logo-section">
+        <a routerLink="" class="logo-link">
+          <span class="logo-text">
+            <span class="logo-auto">AUTO</span>
+            <span class="logo-deal">DEAL</span>
+          </span>
+          <span class="logo-caret">▼</span>
+        </a>
+      </div>
+      <nav class="main-nav">
+        <a (click)="scrollToSection('new-cars', $event)" class="nav-link" style="cursor: pointer;">
+          New Cars
+          <span class="nav-caret">▼</span>
+        </a>
+        <a (click)="scrollToSection('used-cars', $event)" class="nav-link" style="cursor: pointer;">
+          Used Cars
+          <span class="nav-caret">▼</span>
+        </a>
+        <a routerLink="/compare" routerLinkActive="active" class="nav-link">
+          Car Comparison
+          <span class="nav-caret">▼</span>
+        </a>
+      </nav>
+      <div class="header-actions">
+        <a routerLink="/cart" class="icon-btn cart-btn" title="Shopping Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+        </a>
+        <div class="auth-buttons" *ngIf="!isAuthenticated">
+          <a routerLink="/login" class="auth-link">Login</a>
+          <a routerLink="/signup" class="auth-link signup-btn">Sign Up</a>
+        </div>
+        <div class="user-menu" *ngIf="isAuthenticated">
+          <button class="icon-btn user-btn" [title]="currentUser?.name || 'User'" (click)="toggleUserMenu()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </button>
+          <div class="user-dropdown" *ngIf="showUserMenu">
+            <div class="user-info">
+              <div class="user-name">{{ currentUser?.name || 'User' }}</div>
+              <div class="user-role">{{ currentUser?.role === 'admin' ? 'Administrator' : 'Customer' }}</div>
+            </div>
+            <a routerLink="/profile" class="dropdown-item">Profile</a>
+            <a *ngIf="currentUser?.role === 'admin'" routerLink="/admin" class="dropdown-item">Admin Panel</a>
+            <button class="dropdown-item" (click)="logout()">Logout</button>
+          </div>
+        </div>
+        <button class="icon-btn menu-btn">☰</button>
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,61 @@
+<div class="compare-container">
+  <div class="compare-header">
+    <h1>Compare Vehicles</h1>
+    <p>Select up to {{maxCompare}} vehicles to compare side-by-side</p>
+    <button *ngIf="compareList.length > 0" class="btn-clear" (click)="clearCompare()">
+      Clear All
+    </button>
+  </div>
+
+  <div *ngIf="compareList.length === 0" class="empty-state">
+    <div class="empty-icon">⚖️</div>
+    <h2>No vehicles to compare</h2>
+    <p>Add vehicles from the inventory page to start comparing.</p>
+    <a routerLink="/inventory" class="btn-primary">Browse Inventory</a>
+  </div>
+
+  <div *ngIf="compareList.length > 0" class="compare-table-container">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th class="feature-column">Feature</th>
+          <th *ngFor="let vehicle of compareList; let i = index" class="vehicle-column">
+            <button class="btn-remove" (click)="removeFromCompare(vehicle.id)" title="Remove">
+              ✕
+            </button>
+            <div class="vehicle-header">
+              <img [src]="vehicle.images[0] || '/assets/placeholder-car.jpg'" [alt]="vehicle.make + ' ' + vehicle.model" />
+              <h3>{{vehicle.year}} {{vehicle.make}} {{vehicle.model}}</h3>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let feature of getComparisonFeatures()">
+          <td class="feature-name">{{feature}}</td>
+          <td *ngFor="let vehicle of compareList">
+            <div [ngSwitch]="feature">
+              <span *ngSwitchCase="'Price'">₱{{formatPrice(vehicle.price)}}</span>
+              <span *ngSwitchCase="'Year'">{{vehicle.year}}</span>
+              <span *ngSwitchCase="'Mileage'">{{formatPrice(vehicle.mileage)}} km</span>
+              <span *ngSwitchCase="'Fuel Type'">{{vehicle.fuelType}}</span>
+              <span *ngSwitchCase="'Transmission'">{{vehicle.transmission}}</span>
+              <span *ngSwitchCase="'Condition'">{{vehicle.condition}}</span>
+            </div>
+          </td>
+        </tr>
+        <tr class="actions-row">
+          <td class="feature-name">Actions</td>
+          <td *ngFor="let vehicle of compareList" class="actions-cell">
+            <div class="actions-container">
+              <a class="btn-view" routerLink="/vehicle/{{vehicle.id}}">View Details</a>
+              <button class="btn-contact">Contact Dealer</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+

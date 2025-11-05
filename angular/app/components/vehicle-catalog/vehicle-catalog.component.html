@@ -1,0 +1,240 @@
+<div class="homepage">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-carousel-wrapper">
+      <div class="hero-carousel" #heroCarousel>
+        <div class="hero-carousel-slide" *ngFor="let slide of heroSlides; let i = index" [class.active]="currentHeroSlide === i">
+          <img [src]="slide.image" [alt]="slide.alt" />
+          <div class="hero-overlay"></div>
+        </div>
+      </div>
+      <button class="hero-carousel-nav left" (click)="previousHeroSlide()">‹</button>
+      <button class="hero-carousel-nav right" (click)="nextHeroSlide()">›</button>
+      <div class="hero-carousel-dots">
+        <button 
+          *ngFor="let slide of heroSlides; let i = index" 
+          class="hero-dot"
+          [class.active]="currentHeroSlide === i"
+          (click)="goToHeroSlide(i)">
+        </button>
+      </div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">Car Buying, Simplified.</h1>
+        <p class="hero-subtitle">Compare prices on new & used cars from official dealers across the Philippines.</p>
+        <div class="hero-buttons">
+          <button class="btn-primary" routerLink="/inventory">Search New Cars</button>
+          <button class="btn-secondary" routerLink="/inventory">Search Used Cars</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">How AutoDeal Works</h2>
+        <button class="section-nav-btn">→</button>
+      </div>
+      <div class="how-it-works-cards">
+        <div class="works-card">
+          <div class="works-icon">🔑</div>
+          <h3 class="works-title">Choose your car</h3>
+          <p class="works-description">Research thousands of vehicle models online. Explore expert and consumer reviews.</p>
+        </div>
+        <div class="works-card">
+          <div class="works-icon">💰</div>
+          <h3 class="works-title">Compare Offers</h3>
+          <p class="works-description">Get offers from dealerships within minutes; compare prices, available stock & dealer ratings.</p>
+        </div>
+        <div class="works-card">
+          <div class="works-icon">🛡️</div>
+          <h3 class="works-title">Buy with confidence</h3>
+          <p class="works-description">Contact your preferred dealer to book an appointment, test-drive or make a reservation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Car Makes Section -->
+  <section class="popular-makes-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Popular Car Makes</h2>
+        <div class="section-header-right">
+          <button class="section-nav-btn">→</button>
+        </div>
+      </div>
+      <div class="car-makes-carousel">
+        <div class="car-makes-grid">
+          <div class="make-card" *ngFor="let make of popularMakes">
+            <div class="make-image-wrapper">
+              <img [src]="make.image" [alt]="make.name + ' car brand'" class="make-image" />
+            </div>
+            <span class="make-name">{{make.name}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="view-more-link">
+        <a routerLink="/inventory">View More Car Makes →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular New Cars Section -->
+  <section id="new-cars" class="popular-cars-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Popular New Cars</h2>
+      </div>
+      <p class="section-description">
+        Discover a wide selection of new vehicles from trusted brands in the Philippines.
+      </p>
+      <div class="cars-carousel-wrapper">
+        <button class="carousel-nav left" (click)="scrollCarousel('left')">←</button>
+        <div class="cars-carousel" #carsCarousel>
+          <div class="car-card" *ngFor="let vehicle of filteredVehicles">
+            <div class="car-image" routerLink="/vehicle/{{vehicle.id}}">
+              <img [src]="vehicle.images[0] || '/assets/placeholder-car.jpg'" [alt]="vehicle.make + ' ' + vehicle.model" />
+              <span class="sold-badge" *ngIf="isSold(vehicle.id)">SOLD</span>
+              <span class="promo-badge" *ngIf="vehicle.featured && !isSold(vehicle.id)">Promo Available</span>
+              <button class="btn-compare-card" 
+                      (click)="addToCompare(vehicle, $event)"
+                      [class.added]="isInCompareList(vehicle.id)"
+                      [title]="isInCompareList(vehicle.id) ? 'Already in compare list' : 'Add to compare'">
+                <span *ngIf="!isInCompareList(vehicle.id)">⚖️ Compare</span>
+                <span *ngIf="isInCompareList(vehicle.id)">✓ Added</span>
+              </button>
+            </div>
+            <div class="car-info">
+              <div routerLink="/vehicle/{{vehicle.id}}">
+                <h3 class="car-name">{{vehicle.year}} {{vehicle.make}} {{vehicle.model}}</h3>
+                <div class="car-price">₱{{getPriceRange(vehicle)}}</div>
+                <div class="car-variants">{{getVariantCount(vehicle)}} Variants & Specifications</div>
+                <div class="car-brand-logo">{{vehicle.make}}</div>
+              </div>
+              <button 
+                class="btn-buy-now"
+                [class.in-cart]="isInCart(vehicle.id)"
+                [class.sold]="isSold(vehicle.id)"
+                [disabled]="isSold(vehicle.id)"
+                (click)="addToCart(vehicle, $event)"
+                [title]="isSold(vehicle.id) ? 'This vehicle has been sold' : (isInCart(vehicle.id) ? 'Already in cart' : 'Add to cart')">
+                <span *ngIf="isSold(vehicle.id)">SOLD</span>
+                <span *ngIf="!isSold(vehicle.id) && !isInCart(vehicle.id)">🛒 Buy Now</span>
+                <span *ngIf="!isSold(vehicle.id) && isInCart(vehicle.id)">✓ In Cart</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-nav right" (click)="scrollCarousel('right')">→</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Used Cars Section -->
+  <section id="used-cars" class="used-cars-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Used Cars</h2>
+      </div>
+      <p class="section-description">
+        Search thousands of used, repossessed and certified pre-owned car listings in the Philippines.
+      </p>
+      <div class="used-cars-filters">
+        <div class="filter-group">
+          <span class="filter-label">Car Brands:</span>
+          <div class="filter-buttons">
+            <button 
+              *ngFor="let brand of popularBrands" 
+              class="brand-btn"
+              [class.active]="selectedBrand === brand"
+              (click)="selectedBrand = brand; filterUsedCars()">
+              {{brand}}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="cars-carousel-wrapper">
+        <button 
+          class="carousel-nav left" 
+          (click)="scrollUsedCarsCarousel('left')"
+          [class.disabled]="currentUsedCarSlide === 0">
+          ←
+        </button>
+        <div class="used-cars-carousel" #usedCarsCarousel>
+          <div class="used-car-card" *ngFor="let vehicle of usedVehicles">
+            <div class="used-car-image" routerLink="/vehicle/{{vehicle.id}}">
+              <img [src]="vehicle.images[0] || '/assets/placeholder-car.jpg'" [alt]="vehicle.make + ' ' + vehicle.model" />
+              <div class="image-overlay"></div>
+              <span class="sold-badge" *ngIf="isSold(vehicle.id)">SOLD</span>
+              <button class="btn-compare-card" 
+                      (click)="addToCompare(vehicle, $event)"
+                      [class.added]="isInCompareList(vehicle.id)"
+                      [title]="isInCompareList(vehicle.id) ? 'Already in compare list' : 'Add to compare'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 17l-5-5 5-5"></path>
+                  <path d="M20 17l-5-5 5-5"></path>
+                </svg>
+                <span *ngIf="!isInCompareList(vehicle.id)">Compare</span>
+                <span *ngIf="isInCompareList(vehicle.id)">Added</span>
+              </button>
+            </div>
+            <div class="used-car-label">USED CAR</div>
+            <div class="used-car-info">
+              <div routerLink="/vehicle/{{vehicle.id}}">
+                <h3 class="used-car-model">{{vehicle.year}} {{vehicle.make}} {{vehicle.model}} {{vehicle.trim || ''}}</h3>
+                <div class="used-car-price">₱{{formatPrice(vehicle.price)}}</div>
+                <div class="used-car-details">
+                  <span class="detail-item">{{vehicle.mileage.toLocaleString()}} Km</span>
+                  <span class="detail-separator">•</span>
+                  <span class="detail-item">{{vehicle.transmission}}</span>
+                  <span class="detail-separator">•</span>
+                  <span class="detail-item">{{vehicle.fuelType}}</span>
+                </div>
+                <div class="used-car-seller">
+                  <div class="seller-logo">{{getSellerLogo(vehicle)}}</div>
+                  <div class="seller-info">
+                    <div class="seller-name">{{getSellerName(vehicle)}}</div>
+                    <div class="seller-location">{{getSellerLocation(vehicle)}}</div>
+                  </div>
+                </div>
+              </div>
+              <button 
+                class="btn-buy-now"
+                [class.in-cart]="isInCart(vehicle.id)"
+                [class.sold]="isSold(vehicle.id)"
+                [disabled]="isSold(vehicle.id)"
+                (click)="addToCart(vehicle, $event)"
+                [title]="isSold(vehicle.id) ? 'This vehicle has been sold' : (isInCart(vehicle.id) ? 'Already in cart' : 'Add to cart')">
+                <span *ngIf="isSold(vehicle.id)">SOLD</span>
+                <span *ngIf="!isSold(vehicle.id) && !isInCart(vehicle.id)">🛒 Buy Now</span>
+                <span *ngIf="!isSold(vehicle.id) && isInCart(vehicle.id)">✓ In Cart</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <button 
+          class="carousel-nav right" 
+          (click)="scrollUsedCarsCarousel('right')"
+          [class.disabled]="currentUsedCarSlide >= getUsedCarSlideCount() - 1">
+          →
+        </button>
+        <div class="carousel-dots">
+          <button 
+            *ngFor="let i of getCarouselDotsArray()"
+            class="carousel-dot"
+            [class.active]="currentUsedCarSlide === i"
+            (click)="goToUsedCarSlide(i)"
+            [attr.aria-label]="'Go to slide ' + (i + 1)">
+          </button>
+        </div>
+      </div>
+      <div class="view-more-link">
+        <a routerLink="/inventory">View All Used Cars ></a>
+      </div>
+    </div>
+  </section>
+</div>

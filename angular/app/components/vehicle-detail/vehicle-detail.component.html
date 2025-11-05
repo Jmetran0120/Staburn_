@@ -1,0 +1,133 @@
+<div class="vehicle-detail-container" *ngIf="vehicle">
+  <div class="detail-header">
+    <div class="header-left">
+      <h1>{{vehicle.year}} {{vehicle.make}} {{vehicle.model}}<span *ngIf="vehicle.trim"> {{vehicle.trim}}</span></h1>
+      <div class="variant-info">{{variantCount}} Variants & Specifications Available</div>
+    </div>
+    <div class="header-right">
+      <div class="price-range">₱{{getPriceRange()}}</div>
+      <div class="price-base">Starting from ₱{{formatPrice(vehicle.price)}}</div>
+    </div>
+  </div>
+
+  <div class="detail-content">
+    <div class="image-section">
+      <div class="main-image">
+        <img [src]="vehicle.images[selectedImageIndex] || '/assets/placeholder-car.jpg'" [alt]="vehicle.make + ' ' + vehicle.model" />
+        <button *ngIf="vehicle.threeSixtyUrl" class="btn-360" (click)="toggle360View()">
+          🔄 360° View
+        </button>
+        <div class="image-badges">
+          <span *ngIf="vehicle.featured" class="badge promo-badge">Promo Available</span>
+          <span *ngIf="vehicle.inStock" class="badge in-stock">In Stock</span>
+        </div>
+      </div>
+      
+      <div class="image-thumbnails" *ngIf="vehicle.images.length > 1">
+        <img 
+          *ngFor="let image of vehicle.images; let i = index" 
+          [src]="image" 
+          [class.active]="i === selectedImageIndex"
+          (click)="selectImage(i)"
+          [alt]="'Image ' + (i + 1)" 
+        />
+      </div>
+
+      <div *ngIf="show360View && vehicle.threeSixtyUrl" class="viewer-360">
+        <iframe [src]="vehicle.threeSixtyUrl" width="100%" height="500"></iframe>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="specifications-grid">
+        <h2 class="section-title">Vehicle Specifications</h2>
+        <div class="specs-grid">
+          <div class="spec-item">
+            <div class="spec-icon">🆔</div>
+            <div class="spec-content">
+              <span class="spec-label">VIN Number</span>
+              <span class="spec-value">{{vehicle.vin}}</span>
+            </div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-icon">📅</div>
+            <div class="spec-content">
+              <span class="spec-label">Model Year</span>
+              <span class="spec-value">{{vehicle.year}}</span>
+            </div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-icon">⛽</div>
+            <div class="spec-content">
+              <span class="spec-label">Fuel Type</span>
+              <span class="spec-value">{{vehicle.fuelType}}</span>
+            </div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-icon">⚙️</div>
+            <div class="spec-content">
+              <span class="spec-label">Transmission</span>
+              <span class="spec-value">{{vehicle.transmission}}</span>
+            </div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-icon">🎨</div>
+            <div class="spec-content">
+              <span class="spec-label">Exterior Color</span>
+              <span class="spec-value">{{vehicle.color}}</span>
+            </div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-icon">📊</div>
+            <div class="spec-content">
+              <span class="spec-label">Mileage</span>
+              <span class="spec-value">{{vehicle.mileage.toLocaleString()}} {{vehicle.condition === 'New' ? 'Km' : 'Km'}}</span>
+            </div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-icon">✅</div>
+            <div class="spec-content">
+              <span class="spec-label">Condition</span>
+              <span class="spec-value">{{vehicle.condition}}</span>
+            </div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-icon">🚗</div>
+            <div class="spec-content">
+              <span class="spec-label">Make & Model</span>
+              <span class="spec-value">{{vehicle.make}} {{vehicle.model}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="features-section">
+        <h2 class="section-title">Key Features</h2>
+        <div class="features-grid">
+          <div class="feature-item" *ngFor="let feature of getFeaturesList()">
+            <span class="feature-check">✓</span>
+            <span class="feature-text">{{feature}}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="description">
+        <h2 class="section-title">Description</h2>
+        <p>{{vehicle.description}}</p>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" (click)="scheduleTestDrive()">Schedule Test Drive</button>
+        <button class="btn-secondary" (click)="addToCart()">🛒 Add to Cart</button>
+        <button class="btn-secondary" (click)="addToCompare()">⚖️ Compare</button>
+        <button class="btn-outline">Contact Dealer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!vehicle" class="loading">
+  <p>Loading vehicle details...</p>
+</div>
+
+
